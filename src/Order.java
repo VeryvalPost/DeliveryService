@@ -10,16 +10,16 @@ public class Order {
     private Cities cityDeliver;
     private Status status;
 
-    public Order(int trackID,
-                 String nameOfSender,
-                 String surnameOfSender,
-                 String telSender,
-                 String nameOfRecipient,
-                 String surnameOfRecipient,
-                 String telRecipient,
-                 Cities citySend,
-                 Cities cityDeliver,
-                 Status status){
+    protected Order(int trackID,
+                    String nameOfSender,
+                    String surnameOfSender,
+                    String telSender,
+                    String nameOfRecipient,
+                    String surnameOfRecipient,
+                    String telRecipient,
+                    Cities citySend,
+                    Cities cityDeliver,
+                    Status status){
         this.trackID = trackID;
         this.nameOfSender = nameOfSender;
         this.surnameOfSender = surnameOfSender;
@@ -34,17 +34,7 @@ public class Order {
 
     @Override
     public String toString() {
-      // return "Order{" +"id=" + trackID + '\'' +
-      //         ", Sender firstName=" + nameOfSender +", " +
-      //         "Sender lastName=" + surnameOfSender +
-      //         ", Sender telephone=" + telSender +
-      //         ", Recipient firstName=" + nameOfRecipient +  ", " +
-      //         "Recipient lastName=" + surnameOfRecipient +
-      //         ", Recipient telephone=" + telRecipient +
-      //         ", City of sender=" + citySend +
-      //         ", City of destination=" + cityDeliver +
-      //         ", status=" + status +
-      //         '}';
+
         StringBuilder sb = new StringBuilder();
         sb.append(trackID+",")
                 .append(nameOfSender+",")
@@ -59,14 +49,6 @@ public class Order {
         return sb.toString();
     }
 
-    //метод для расчета расстояния между локациями
-    public static int DistanceBetween(Cities city1, Cities city2){
-
-        int pointA = city1.Distance(city1);
-        int pointB = city1.Distance(city2);
-        int between = Math.abs(pointA - pointB);
-        return between;
-    }
 
     public int getTrackID() {
         return trackID;

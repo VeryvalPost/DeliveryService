@@ -29,10 +29,12 @@ public class Main {
 
 
         // Здесь два заказа исключительно для заполнения таблицы изначально. Если файл уже заполнен, то этот блок необходимо удалить, чтоб не работал каждый раз при запуске.
-        Order order = new Order(1, "Vasya", "Vasin", "+7900000000", "Ivan", "Ivanov", "+7900000001", Cities.MSK, Cities.SOCH, Status.IN_WORK);
+        // Класс OrderChild был выбран исключительно, чтоб удовлетворить условиям задания Open-closed principle. Он немного расширен полем deliveryCost.
+        OrderChild order = new OrderChild(1, "Vasya", "Vasin", "+7900000000", "Ivan", "Ivanov", "+7900000001", Cities.MSK, Cities.SOCH, Status.IN_WORK);
         addOrderToCSV(order, fileName);
-        Order order2 = new Order(2, "Petr", "Petrov", "+7900000003", "Tolya", "Tokin", "+7900000005", Cities.SPB, Cities.KRD, Status.ACCEPTED);
+        OrderChild order2 = new OrderChild(2, "Petr", "Petrov", "+7900000003", "Tolya", "Tokin", "+7900000005", Cities.SPB, Cities.KRD, Status.ACCEPTED);
         addOrderToCSV(order2, fileName);
+        order2.setDeliveryCost(720);
 
         while (true) {
 
@@ -52,7 +54,7 @@ public class Main {
                     break;
                 case "2":
                     System.out.println("Расчет стоимости доставки между населенными пунктами");
-                    System.out.println("Доставка обойдется в " +(COST / 1000 * Order.DistanceBetween(inputCity(SENDER),inputCity(DELIVER))) + " рублей");
+                    System.out.println("Доставка обойдется в " +(COST / 1000 * Cities.DistanceBetween(Cities.inputCity(SENDER),Cities.inputCity(DELIVER))) + " рублей");// Single-responsibility principle. Всё что относится к городам и расстояниям - выделено в отдельный класс
                     break;
                 case "3":
                     System.out.println("Статус отправления");
@@ -81,6 +83,7 @@ public class Main {
     }
 
     // метод для добавления информации о доставке в файл CSV orderdata.csv
+    // DRY
     public static void addOrderToCSV(Order order, String filename) {
         String[] ordersArray = order.toString().split(",");
         try (CSVWriter writer = new CSVWriter(new FileWriter(filename, true))) { // Всё, что работает с ресурсами необходимо закрывать.
@@ -91,6 +94,7 @@ public class Main {
     }
 
     // метод для чтения информации о доставке из файл CSV orderdata.csv
+    // DRY
     public static HashMap<Integer, Order> readOrderFromCSV(String filename, HashMap<Integer, Order> ordersMap) {
 
         try (CSVReader reader = new CSVReader(new FileReader(filename))) { // Всё, что работает с ресурсами необходимо закрывать.
@@ -99,7 +103,7 @@ public class Main {
                 String line = Arrays.toString(nextLine);
                 line = line.substring(1, line.length() - 1);
                 String[] order = line.split(", ");
-                Order forRead = new Order(Integer.parseInt(order[0]), order[1], order[2], order[3], order[4], order[5], order[6], Cities.detectCity(order[7]), Cities.detectCity(order[8]), Status.strToEnum(order[9]));
+                Order forRead = new OrderChild(Integer.parseInt(order[0]), order[1], order[2], order[3], order[4], order[5], order[6], Cities.detectCity(order[7]), Cities.detectCity(order[8]), Status.strToEnum(order[9]));
                 ordersMap.put(Integer.parseInt(order[0]), forRead);
             }
         } catch (IOException | CsvValidationException e) {
@@ -147,24 +151,13 @@ public class Main {
         input = scanner.nextLine();
         telRecipient = input;
 
-        citySend = inputCity(SENDER);
+        citySend = Cities.inputCity(SENDER); // Single-responsibility principle. Всё что относится к городам и расстояниям - выделено в отдельный класс
 
-        cityDeliver = inputCity(DELIVER);
+        cityDeliver = Cities.inputCity(DELIVER);// Single-responsibility principle. Всё что относится к городам и расстояниям - выделено в отдельный класс
 
-        Order forRead = new Order((ordersMap.size()+1), nameOfSender, surnameOfSender, telSender, nameOfRecipient, surnameOfRecipient, telRecipient, citySend, cityDeliver, Status.randomStatus());
+        Order forRead = new OrderChild((ordersMap.size()+1), nameOfSender, surnameOfSender, telSender, nameOfRecipient, surnameOfRecipient, telRecipient, citySend, cityDeliver, Status.randomStatus());
         addOrderToCSV(forRead,fileName);
     }
-    public static Cities inputCity(String cityOf){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите город "+cityOf+": \n" +
-                "    MSK - Москва,\n" +
-                "    SPB - Санкт-Петербург,\n" +
-                "    SOCH - Сочи,\n" +
-                "    KRD - Краснодар,\n" +
-                "    VRN - Воронеж");
-        String input = scanner.nextLine();
-        Cities city = Cities.detectCity(input);
-        return city;
-    }
+
 }
 

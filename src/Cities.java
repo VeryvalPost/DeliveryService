@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public enum Cities {
     MSK,
     SPB,
@@ -40,5 +42,27 @@ public enum Cities {
                 dist = 2600;
                 return dist;
         } return 0;
+    }
+
+    public static Cities inputCity(String cityOf){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите город "+cityOf+": \n" +
+                "    MSK - Москва,\n" +
+                "    SPB - Санкт-Петербург,\n" +
+                "    SOCH - Сочи,\n" +
+                "    KRD - Краснодар,\n" +
+                "    VRN - Воронеж");
+        String input = scanner.nextLine();
+        //Cities city = Cities.detectCity(input);
+        return Cities.detectCity(input);
+    }
+
+    //метод для расчета расстояния между локациями
+    public static int DistanceBetween(Cities city1, Cities city2){
+
+        int pointA = city1.Distance(city1);
+        int pointB = city1.Distance(city2);
+        //int between = Math.abs(pointA - pointB);
+        return Math.abs(pointA - pointB);
     }
 }
